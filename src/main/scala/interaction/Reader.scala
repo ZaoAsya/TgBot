@@ -50,7 +50,6 @@ object Reader {
   def parse(name : String) : Try[Command] = {
     val list = converter(name)
     val result = list.mkString(util.Properties.lineSeparator)
-    print(result)
     createCommands(result)
   }
 }

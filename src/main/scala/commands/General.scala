@@ -3,12 +3,13 @@ package commands
 import java.util.Date
 
 import Repository._
-import interaction.{ParamsParser, Writer}
+import interaction.ParamsParser
 import poll.Poll
 
 import scala.util.Try
 
 object General {
+  val parser = new ParamsParser()
   private def getMonth(month: String): String = {
     month match {
       case "Jan" => "01"
@@ -32,8 +33,6 @@ object General {
   }
 
   def createPoll(params: Try[List[String]]): String = {
-    val parser = new ParamsParser()
-
     val name = Try(params.get.head)
 
     val anonymous: Try[Boolean] = Try(
@@ -74,45 +73,40 @@ object General {
     val poll = new Poll(title, anonymous, viewType, startTime, stopTime)
     val id = AllPolls.get_id()
     AllPolls.set(id, poll)
-    id
+    "Success: " + id
   }
 
   def pollList(): String = {
-    if (Try(AllPolls.getAll).isSuccess && AllPolls.getAll.nonEmpty)
+    if (AllPolls.getAll.nonEmpty)
       AllPolls.getAll.toList.sortBy(e => e._1.toInt).mkString("\n")
     else
       "Can You see the list of Your polls? I can't too. But they exists."
   }
 
   def deletePoll(id: Try[List[String]]): String = {
-    if (Try {
-          val n = id.get.head
-          AllPolls.remove(n)
-          RunPolls.remove(n)
-        }.isSuccess)
+    if (id.isSuccess && RunPolls.get(id.get.head).isSuccess || AllPolls.get(id.get.head).isSuccess) {
+      AllPolls.remove(id.get.head)
+      RunPolls.remove(id.get.head)
       "Exterminate! Exterminate! Exterminate!"
+    }
     else
-      "Can't delete Your Poll, maybe id is not set up!"
+      "Can't delete Your Poll, cuz there's no such one!"
   }
 
   def startPoll(id: Try[List[String]]): String = {
-    if (id.isSuccess) {
-      val n = id.get.head
-      if (RunPolls.set(n, AllPolls.get(n)).isSuccess)
-        "Your poll was just started, look for feedback!"
-      else "Can't start your Poll, cuz there's no such Poll! Please try again later!"
+    if (id.isSuccess && AllPolls.get(id.get.head).isSuccess) {
+      RunPolls.set(id.get.head, AllPolls.get(id.get.head))
+      "Your poll was just started, look for feedback!"
     }
-    else "Can't start your Poll! Choose id!"
+    else "Can't start your Poll, cuz there's no such one!"
   }
 
   def stopPoll(id: Try[List[String]]): String = {
-    if(id.isSuccess)
-      if (RunPolls.get(id.get.head).isSuccess) {
-        RunPolls.remove(id.get.head)
-        "Your poll was just finished, that was a great poll!"
-      }
-      else "Cant't stop Your Poll, it isn't run!"
-    else "Cant't stop Your Poll, choose id!"
+    if (id.isSuccess && RunPolls.get(id.get.head).isSuccess) {
+      RunPolls.remove(id.get.head)
+      "Your poll was just finished, that was a great poll!"
+    }
+    else "Cant't stop Your Poll, cuz it's not run!"
   }
 
   def pollResult(id: Try[List[String]]): String = {
@@ -132,39 +126,36 @@ object General {
 
   def addQuestion(params: Try[List[String]],
                   answers: Try[List[String]]): String = {
-    if (!params.isSuccess) "Wrong parameters"
-    else if (!answers.isSuccess) "Wrong format of answers"
-    else {
-      val name = Try(params.get.head)
-      val qtype = Try(params.get.last)
-      CurrentPoll.get.inner.set_question(name, qtype, answers.get)
-      "Success"
+    val name = Try(params.get.head)
+    val qtype = Try(if (Try(params.get.last).isFailure) "open"
+      else parser.parseAll(parser.qtype, params.get.last).get
+    )
+    if (name.isSuccess && qtype.isSuccess && answers.isSuccess) {
+      val n = CurrentPoll.get.inner.set_question(name.get, qtype.get, answers.get)
+      "Success: " + n
     }
+    else "Can't add the question to your Poll"
   }
 
   def begin(id: Try[List[String]]): String = {
-    if (id.isSuccess) {
+    if (id.isSuccess && AllPolls.get(id.get.head).isSuccess && CurrentPoll == null) {
       CurrentPoll.set(AllPolls.get(id.get.head))
       "Success"
-    } else {
-      "There is no such Poll"
     }
+    else if (id.isSuccess && AllPolls.get(id.get.head).isSuccess && CurrentPoll != null)
+      "You've already begun one Poll!"
+    else "There is no such Poll"
   }
 
   def end: String = {
-    try {
-      CurrentPoll.setNone()
-      "Success"
-    } catch {
-      case _: Exception =>
-        "It's impossible to catch a fail in this command! But you've done it!"
-    }
+    if (Try(CurrentPoll.setNone()).isSuccess) "Success"
+    else "It's impossible to catch a fail in this command! But you've done it!"
   }
 
   def view: String = {
-    Writer.write(CurrentPoll.get)
-    // make a beauty
-    ""
+    if (CurrentPoll != null) ???
+    else ???
+    //make beauty
   }
 
 //  def deleteQuestion(number : Int) {

@@ -1,6 +1,6 @@
 package poll
 
-class Poll(title: String,
+case class Poll(title: String,
            anonymous: Boolean,
            view: String,
            start: String,
@@ -12,12 +12,4 @@ class Poll(title: String,
   val stopTime: String = finish
   val isOver: Boolean = false
   val inner: Inner = new Inner()
-  var questions = List()
-  var answers = List()
-
-  override def toString : String = {
-    val result_string = List(this.name, this.isAnonymous.toString, this.viewType, this.startTime, this.stopTime)
-      .mkString(", ")
-    result_string
-  }
 }

@@ -1,10 +1,8 @@
 package poll
 
-import scala.util.Try
-
 class Inner {
   private var inner = Map[Int, Map[String, Map[Int, Map[String, List[String]]]]]()
-  //numQ   question     numA      answer    people
+                       //numQ   question     numA      answer    people
 
   def get_question(numQ: Int): Option[String] = inner.get(numQ).map(m => m.keys.toList.head)
 
@@ -19,7 +17,9 @@ class Inner {
   def get_votes(numQ: Int, numA: Int): Option[List[String]] =
     inner.get(numQ).flatMap(m => m.values.toList.head.get(numA).map(e => e.values.toList.head))
 
-  def set_question(name: Try[String], qtype: Try[String], answers: List[String]) {}
+  def set_question(name: String, qtype: String, answers: List[String]): String = {
+  ???
+  }
 
   def set_answer() {}
 
