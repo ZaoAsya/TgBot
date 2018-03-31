@@ -6,7 +6,7 @@ import commands.General._
 
 
 class TestParsing extends FlatSpec {
-  
+
   assertResult("Can You see the list of Your polls? I can't too. But they exists.")
   {createCommands("/list").get.execute()}
 
@@ -25,7 +25,7 @@ class TestParsing extends FlatSpec {
 
   assertResult("Exterminate! Exterminate! Exterminate!"){createCommands("/delete_poll (0)").get.execute()}
   assert(AllPolls.get("0").isFailure)
-  //assertResult("Can't delete Your Poll, maybe id is not set up!"){createCommands("/delete_poll ").get.execute()}
+  assertResult("Can't delete Your Poll, maybe id is not set up!"){createCommands("/delete_poll ").get.execute()}
   //assertResult("Can't delete Your Poll, maybe id is not set up!"){createCommands("/delete_poll ()").get.execute()}
   //assertResult("Can't delete Your Poll, maybe id is not set up!"){createCommands("/delete_poll (5)").get.execute()}
   //assertResult("Can't delete Your Poll, maybe id is not set up!")createCommands("/delete_poll (d)").get.execute()}
