@@ -1,10 +1,11 @@
 package poll
 
-case class Poll(name: String,
+
+case class Poll(id: Int, name: String,
                 isAnonymous: Boolean,
                 viewType: String,
                 startTime: String,
                 stopTime: String,
                 isRun: Boolean = false,
-                questions : List[String] = List(),
-                answers : Map[Int, List[String]] = Map[Int, List[String]]())
+                questions : Vector[(String, String)] = Vector(),
+                answers : Vector[Vector[String]] = Vector())

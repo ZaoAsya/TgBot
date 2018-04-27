@@ -7,7 +7,7 @@ import parsers.CommandParser
 
 object TgBot extends App with TelegramBot with Polling {
   lazy val token = "579167870:AAHKuX5OQIbZ91AhAQOCimGE9KX0Vy2EZss"
-  lazy val administrators : List[User] = List(
+  lazy val administrators : Vector[User] = Vector(
     User(299755750,isBot = false,"Ася",Some("Заостровская"),Some("Asya_zao"),Some("ru")) ,
     User(284163794,isBot = false,"Semyon",Some("Okunkov"),Some("FoOkySNick"),Some("ru-RU"))
   )

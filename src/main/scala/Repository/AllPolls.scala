@@ -5,22 +5,25 @@ import poll.Poll
 import scala.util.{Failure, Success, Try}
 
 object AllPolls {
-  private var P = Map[String, Poll]()
+  private var P = Map[Int, Poll]()
 
-  def get(id: String): Try[Poll] =
+  def get(id: Int): Try[Poll] =
     P.get(id).map(Success(_)).getOrElse(Failure(new Exception))
 
-  def set(id: String, poll: Poll): Unit = P = P updated (id, poll)
+  def get(poll: Poll): Try[Poll] =
+    Try(P.values.filter(p => p == poll).head)
 
-  def remove(id: String): Unit = P = P - id
+  def set(id: Int, poll: Poll): Unit = P = P updated (id, poll)
 
-  def getAll: Map[String, Poll] = P
+  def remove(id: Int): Unit = P = P - id
 
-  def get_id(): String = {
-    (if (P.toList.nonEmpty) P.toList.maxBy(_._1)._1.toInt + 1 else 0).toString
+  def getAll: Map[Int, Poll] = P
+
+  def get_id(): Int = {
+    if (P.toList.nonEmpty) P.toList.maxBy(_._1)._1.toInt + 1 else 0
   }
 
-  def getRun(id: String): Try[Poll] =
+  def getRun(id: Int): Try[Poll] =
     P.get(id).filter(_.isRun).map(Success(_)).getOrElse(Failure(new Exception()))
 
   def contains(poll : Poll) : Boolean = {
@@ -31,11 +34,12 @@ object AllPolls {
     getAllRun.values.toList.contains(poll)
   }
 
-  def setRun(id: String, poll: Poll): Option[Unit] =
+  def setRun(id: Int, poll: Poll): Option[Unit] =
     P.get(id).filter(!_.isRun).map(p => P = P updated(id, p.copy(isRun = true)))
 
-  def removeRun(id: String): Option[Unit] =
+  def removeRun(id: Int): Option[Unit] =
     P.get(id).filter(_.isRun).map(p => P = P updated(id, p.copy(isRun = false)))
 
-  def getAllRun: Map[String, Poll] = P.filter(e => e._2.isRun)
+  def getAllRun: Map[Int, Poll] = P.filter(e => e._2.isRun)
+
 }

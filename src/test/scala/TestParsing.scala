@@ -69,7 +69,7 @@ class TestParsing extends FlatSpec {
     assertResult("Exterminate! Exterminate! Exterminate!") {
       parse("/delete_poll (0)", adm, admID).get
     }
-    assert(AllPolls.get("0").isFailure)
+    assert(AllPolls.get(0).isFailure)
     assert(parse("/delete_poll ", adm, admID).isFailure)
     assert(parse("/delete_poll ()", adm, admID).isFailure)
     assertResult("Can't delete Your Poll, cuz there's no such one!") {
@@ -86,7 +86,7 @@ class TestParsing extends FlatSpec {
     assertResult("Let's Rock!") {
       parse("/begin (3)", adm, admID).get
     }
-    assert(CurrentPoll.get(admID) == AllPolls.get("3"))
+    assert(CurrentPoll.get(admID) == AllPolls.get(3))
     assertResult("You've already begun one Poll!") {
       parse("/begin (4)", adm, admID).get
     }
@@ -94,21 +94,26 @@ class TestParsing extends FlatSpec {
     assertResult("Let's Rock!") {
       parse("/begin (4)", usr, userID).get
     }
-    assert(CurrentPoll.get(userID) == AllPolls.get("4"))
+    assert(CurrentPoll.get(userID) == AllPolls.get(4))
     assertResult("You've already begun one Poll!") {
       parse("/begin (4)", usr, userID).get
     }
   }
 
   "/add_question" should "add question to current poll (Admin)" in {
-//    assertResult("Success: 0"){
-//      parse("/add_question (new question?) (open)\nans1\nans2\nans3", adm, admID)
-//    }
+    //    assertResult("Success: 0"){
+    //      parse("/add_question (new question?) (open)\nans1\nans2\nans3", adm, admID)
+    //    }
     assert(parse("/add_question (new question?) (open) ans1\nans2\nans3", adm, admID).isFailure)
     assert(parse("/add_question", adm, admID).isFailure)
-//    assertResult("Success: 1"){
-//      parse("/add_question (new question?) (open)\nans1\nans2\nans3", adm, admID)
-//    }
+    //    assertResult("Success: 1"){
+    //      parse("/add_question (new question?) (open)\nans1\nans2\nans3", adm, admID)
+    //    }
+  }
+
+  "/delete_question" should "delete question by id in current poll (Admin)" in {
+    assert(parse("/delete_question (a)", adm, admID).isFailure)
+    assert(parse("/delete_question", adm, admID).isFailure)
   }
 
   "/answer" should "save the answer on question by id" in {
@@ -118,11 +123,6 @@ class TestParsing extends FlatSpec {
     assert(parse("/answer", usr, userID).isFailure)
     assert(parse("/answer (jk)", usr, userID).isFailure)
 
-  }
-
-  "/delete_question" should "delete question by id in current poll (Admin)" in {
-    assert(parse("/delete_question (a)", adm, admID).isFailure)
-    assert(parse("/delete_question", adm, admID).isFailure)
   }
 
   "/end" should "stop working with current poll" in {
@@ -147,7 +147,7 @@ class TestParsing extends FlatSpec {
     assertResult("Your poll was just started, look for feedback!") {
       parse("/start_poll (1)", adm, admID).get
     }
-    assert(AllPolls.getRun("1").isSuccess)
+    assert(AllPolls.getRun(1).isSuccess)
     assert(parse("/start_poll ()", adm, admID).isFailure)
     assert(parse("/start_poll (d)", adm, admID).isFailure)
     assertResult("Can't start your Poll, cuz there's no such one!") {
@@ -159,7 +159,7 @@ class TestParsing extends FlatSpec {
     assertResult("Your poll was just finished, that was a great poll!") {
       parse("/stop_poll (1)", adm, admID).get
     }
-    assert(AllPolls.getRun("1").isFailure)
+    assert(AllPolls.getRun(1).isFailure)
     assertResult("Cant't stop Your Poll, cuz it's not run!") {
       parse("/stop_poll (12)", adm, admID).get
     }

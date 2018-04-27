@@ -3,6 +3,9 @@ package Repository
 import poll.Poll
 
 import scala.util.{Failure, Success, Try}
+import com.softwaremill.quicklens._
+
+
 
 object CurrentPoll {
   private var P : Map[Int, Poll] = Map()
