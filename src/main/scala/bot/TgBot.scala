@@ -1,8 +1,8 @@
 package bot
+import parsers.CommandParser
 import info.mukel.telegrambot4s.api._
 import info.mukel.telegrambot4s.methods._
 import info.mukel.telegrambot4s.models._
-import parsers.CommandParser
 
 
 object TgBot extends App with TelegramBot with Polling {
@@ -49,5 +49,8 @@ Here is a list of commands you need to make your Poll Great again:
     }
   }
 
+  val timer = new Thread(timers.PollTimer)
+  timer.setDaemon(true)
+  timer.start()
   TgBot.run()
 }
